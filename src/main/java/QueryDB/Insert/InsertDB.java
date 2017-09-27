@@ -29,7 +29,7 @@ public class InsertDB {
 
         // Insert Document 1
         ReadJSON js = new ReadJSON();
-        JSONArray array = js.readFolder("E://Study//TTTN//piStar//iStar2010_done");
+        JSONArray array = js.readFolder("C:\\Users\\DUONG\\Desktop\\i");
         
         int i = 1;
         for (Object obj : array) {

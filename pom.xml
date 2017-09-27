@@ -23,11 +23,6 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <dependency>
-            <groupId>bxan.com</groupId>
-            <artifactId>DiscoProject</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <type>war</type>
-        </dependency>
+      
     </dependencies>
 </project>
