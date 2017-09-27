@@ -49,6 +49,8 @@ public class SimpleQuery {
 //        field.put("_id", 0);
 
         Grouping a = new Grouping();
+        
+        
         DBCursor cursor = dept.find();
         
         int i = 1;

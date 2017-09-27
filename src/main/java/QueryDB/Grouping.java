@@ -56,6 +56,8 @@ public class Grouping {
         DBCollection dept = db.getCollection(MyConstants.COL_NAME);
 
         DBCursor cursor = dept.find();
+        
+        
         DBObject dbObj = (DBObject) cursor.next();
 
         BasicDBList actor= (BasicDBList) dbObj.get(ACTOR);
