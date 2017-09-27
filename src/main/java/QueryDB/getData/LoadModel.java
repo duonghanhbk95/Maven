@@ -30,9 +30,10 @@ import org.json.simple.JSONArray;
  */
 public class LoadModel {
 
-    private static List types;
+    private static List<Type> types;
     private static List<Grouping> groups;
     private static DB db;
+
     public LoadModel() {
         LoadModel.groups = new ArrayList();
         LoadModel.types = new ArrayList();
@@ -54,81 +55,43 @@ public class LoadModel {
         return cursor;
 
     }
-    
+
     private void insertGroup(List group) {
 //        db.createCollection("Group");
     }
+
     public static void main(String[] args) {
 
         LoadModel load = new LoadModel();
         DBCursor iCursor = load.loadModel();
+
+        int i = 1;
         
+        Grouping group = new Grouping();
         
-        
-        Type t = new Type();
-        
-        int i = 0;
-        while(iCursor.hasNext()) {
-            Grouping group = new Grouping(i);
+        Type type = new Type();
+        while (iCursor.hasNext()) {
+            List listType = new ArrayList();
             
             DBObject dbObj = (DBObject) iCursor.next();
             
-            t.setGoal(t.getGroup(dbObj, "istar.Goal"));
-            t.setTask(t.getGroup(dbObj, "istar.Task"));
-            t.setQuality(t.getGroup(dbObj, "istar.Quality"));
-            t.setResource(t.getGroup(dbObj, "istar.Resource"));
-            t.setGroup_id(i);
+            System.out.println("goal: " + i + ":" + type.getGroup(dbObj, "istar.Goal"));
             
-            
-            types.add(t.getGoal());
-            types.add(t.getTask());
-            types.add(t.getQuality());
-            types.add(t.getResource());
-            
-//            
-//            group.setType(types);
-//            groups.get(i).addType(t);
-//            
-           
-            group.setType(types);
-            groups.add(group);
-            
-            group.setType(types);
-            groups.add(group);
-            
-            group.setType(types);
-            groups.add(group);
-            
-            System.out.println("group :" + groups.get(i).types);
-          
-            
-//            gr.setType(t.getTask());
-//            types.add(gr);
-//            
-//            gr.setType(t.getQuality());
-//            types.add(gr);
-//            
-//            gr.setType(t.getResource());
-//            types.add(gr);
-            
-            System.out.println("------------------------------------");
-            System.out.println("goal" + "[" + i + "]" + t.getGoal());
-            System.out.println("task" + "[" + i + "]" + t.getTask());
-            System.out.println("quality" + "[" + i + "]" + t.getQuality());
-            System.out.println("resource" + "[" + i + "]" + t.getResource());
-            
-            
-           
+            listType = group.getVector(type.getGroup(dbObj, "istar.Goal"), type.getGroup(dbObj, "istar.Task"),
+                    type.getGroup(dbObj, "istar.Quality"), type.getGroup(dbObj, "istar.Resource"));
+
+            BasicDBObject doc = new BasicDBObject();
+            doc.put("id_model", i);
+            BasicDBObject vector = new BasicDBObject();
+            vector.append("goal", listType.get(0)).append("task", listType.get(1));
+            vector.append("quality", listType.get(2)).append("resource", listType.get(3));
+            doc.put("vector", vector);
+            DBCollection insert = db.getCollection("vector2");
+            insert.insert(doc);
+
             i++;
         }
-       
-       
-
-        
-        
 
     }
-    
-    
 
 }

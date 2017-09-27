@@ -11,5 +11,5 @@ package ConnectDB;
  */
 public class MyConstants {
     public static final String DB_NAME ="MyStudyDB";
-    public static final String COL_NAME = "vector";
+    public static final String COL_NAME = "OriginalModel";
 }

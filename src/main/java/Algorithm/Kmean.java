@@ -17,7 +17,7 @@ import java.util.List;
 public class Kmean {
 //Number of Clusters. This metric should be related to the number of points
 
-    private final int NUM_CLUSTERS = 2;
+    private final int NUM_CLUSTERS = 3;
     private List<Point> points;
     private final List<Cluster> clusters;
 
@@ -29,7 +29,8 @@ public class Kmean {
     public void init(Cursor cursor) {
 
         points = Point.getPoints(cursor);
-
+        
+        
         //Create Clusters
         //Set Centroids
         for (int i = 0; i < NUM_CLUSTERS; i++) {
@@ -37,9 +38,11 @@ public class Kmean {
             Point centroid = points.get(i);
             cluster.setCentroid(centroid);
             clusters.add(cluster);
-            
-            
+
         }
+        
+        InsertClusterDB db = new InsertClusterDB();
+        db.insertCluster(clusters);
         plotClusters();
     }
 
@@ -81,6 +84,7 @@ public class Kmean {
             System.out.println("#################");
             System.out.println("Iteration: " + iteration);
             System.out.println("Centroid distances: " + distance);
+
             plotClusters();
 
             if (distance == 4) {
@@ -118,7 +122,7 @@ public class Kmean {
                 Cluster c = clusters.get(i);
                 System.out.println("point" + "[" + count + "]:" + point + "\n");
                 System.out.println("centroid" + "[" + i + "]:" + c.getCentroid() + "\n");
-                
+
                 distance = Point.distance(point, c.getCentroid());
 
                 System.out.println("distance" + "[" + i + "]:" + distance);
@@ -131,9 +135,9 @@ public class Kmean {
             }
 
             point.setCluster(cluster);
-            
+
             clusters.get(cluster).addPoint(point);
-         
+
         }
 
     }
@@ -141,19 +145,19 @@ public class Kmean {
     private void calculateCentroids() {
         Similarity sml = new Similarity();
         List emp = new ArrayList();
-        for(Cluster cluster : clusters) {
+        for (Cluster cluster : clusters) {
             List<Point> list = cluster.getPoints();
             Representation r = new Representation();
             emp = r.represent(list, sml);
-            
+
             Point centroid = cluster.getCentroid();
-            
+
             centroid.setGoal(emp.get(0).toString());
             centroid.setTask(emp.get(1).toString());
             centroid.setQuality(emp.get(2).toString());
             centroid.setResource(emp.get(3).toString());
         }
-     
+
     }
 
     public static void main(String[] args) {
@@ -165,6 +169,7 @@ public class Kmean {
         k.init(cursor);
 //        k.assignCluster();
 //        k.calculateCentroids();
-        k.calculate();
+//        k.calculate();
+
     }
 }

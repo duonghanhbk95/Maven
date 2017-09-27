@@ -25,7 +25,7 @@ public class InsertDB {
     public void insert() throws UnknownHostException {
         MongoClient mongoClient = MongoUtils.getMongoClient();
         DB db = mongoClient.getDB(MyConstants.DB_NAME);
-        DBCollection dept = db.getCollection("Department");
+        DBCollection dept = db.getCollection(MyConstants.COL_NAME);
 
         // Insert Document 1
         ReadJSON js = new ReadJSON();

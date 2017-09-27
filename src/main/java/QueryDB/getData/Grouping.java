@@ -17,28 +17,16 @@ import java.util.List;
  * @author Hanh Nguyen
  */
 public class Grouping {
-    public int id;
-    public List<Type> types;
-
-    public Grouping(int id) {
-        this.id = id;
+    public List getVector(List goal, List task, List quality, List resource) {
+        List emp = new ArrayList();
+        emp.add(goal.get(0));
+        
+        System.out.println("goal:" + goal.get(0));
+        emp.add(goal.get(0));
+        emp.add(goal.get(0));
+        emp.add(goal.get(0));
+        
+        return emp;
     }
-    public int getId() {
-        return id;
-    }
-
-    public List getType() {
-        return types;
-    }
-
-    public void setType(List type) {
-        this.types = type;
-    }
-     
-
-    public void addType(Type type) {
-        types.add(type);
-    }
-
     
 }

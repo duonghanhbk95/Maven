@@ -88,7 +88,7 @@ public class Type {
     }
 // grouping
 
-    public List getGroup(DBObject dbObj, String type) {
+    public List<Type> getGroup(DBObject dbObj, String type) {
         List emp = new ArrayList();
 //        MongoClient mongoClient = null;
 //        try {
