@@ -22,7 +22,7 @@ import org.json.simple.parser.ParseException;
  */
 public class ReadJSON {
     private final ArrayList<String> list;
-    private final static String path = "E:/Study/TTTN/piStar/iStar2005_done";
+    private final static String path = "C:\\Users\\DUONG\\Downloads\\New folder";
     private final String ACTORS = "actors";
     private JSONObject jsonObject;
 

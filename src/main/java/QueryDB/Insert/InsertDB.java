@@ -31,7 +31,7 @@ public class InsertDB {
        
         // Insert Document 1
         ReadJSON js = new ReadJSON();
-        JSONArray array = js.readFolder("E://Study//TTTN//piStar//iStar2005_done");
+        JSONArray array = js.readFolder("C:\\Users\\DUONG\\Downloads\\New folder");
         for (Object obj : array) {
             DBObject dbObject = (DBObject) JSON.parse(obj.toString());
             System.out.println("dbObject:" + dbObject);
