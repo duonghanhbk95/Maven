@@ -64,9 +64,9 @@ public class LoadModel {
 
         LoadModel load = new LoadModel();
         DBCursor iCursor = load.loadModel();
-
-        int i = 1;
         
+        int i = 1;
+       
         Grouping group = new Grouping();
         
         Type type = new Type();
