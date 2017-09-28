@@ -36,7 +36,7 @@ public class InsertClusterDB {
         DBCollection cluster = db.getCollection("Centroid");
 
         for (int i = 0; i < clusters.size(); i++) {
-            BasicDBObject dbObject = new BasicDBObject("cluster_id", i).append("centroid", clusters.get(i).getCentroid().toString());
+            BasicDBObject dbObject = new BasicDBObject("cluster_id", i+1).append("centroid", clusters.get(i).getCentroid().toString());
             cluster.insert(dbObject);
 
         }

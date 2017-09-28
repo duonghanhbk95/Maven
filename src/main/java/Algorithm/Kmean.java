@@ -91,6 +91,7 @@ public class Kmean {
                 finish = true;
             }
         }
+        plotClusters();
     }
 
     private void clearClusters() {
@@ -141,7 +142,7 @@ public class Kmean {
         }
 
     }
-
+    
     private void calculateCentroids() {
         Similarity sml = new Similarity();
         List emp = new ArrayList();
@@ -169,7 +170,7 @@ public class Kmean {
         k.init(cursor);
 //        k.assignCluster();
 //        k.calculateCentroids();
-//        k.calculate();
+        k.calculate();
 
     }
 }

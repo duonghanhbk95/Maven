@@ -75,11 +75,13 @@ public class LoadModel {
             
             DBObject dbObj = (DBObject) iCursor.next();
             
-            System.out.println("goal: " + i + ":" + type.getGroup(dbObj, "istar.Goal"));
+            
             
             listType = group.getVector(type.getGroup(dbObj, "istar.Goal"), type.getGroup(dbObj, "istar.Task"),
                     type.getGroup(dbObj, "istar.Quality"), type.getGroup(dbObj, "istar.Resource"));
-
+            
+            System.out.println("list type:" + i + listType);
+           
             BasicDBObject doc = new BasicDBObject();
             doc.put("id_model", i);
             BasicDBObject vector = new BasicDBObject();
