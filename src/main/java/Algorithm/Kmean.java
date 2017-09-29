@@ -5,10 +5,25 @@
  */
 package Algorithm;
 
-import QueryDB.getData.LoadModel;
+import ConnectDB.ConnectionDB;
+import ConnectDB.MongoUtils;
+import ConnectDB.MyConstants;
+import QueryDB.SimpleQuery;
+import QueryDB.getData.Comparation;
+import QueryDB.getData.Vector;
+import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.Cursor;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,8 +44,7 @@ public class Kmean {
     public void init(Cursor cursor) {
 
         points = Point.getPoints(cursor);
-        
-        
+
         //Create Clusters
         //Set Centroids
         for (int i = 0; i < NUM_CLUSTERS; i++) {
@@ -40,10 +54,11 @@ public class Kmean {
             clusters.add(cluster);
 
         }
-        
-        InsertClusterDB db = new InsertClusterDB();
-        db.insertCluster(clusters);
+
         plotClusters();
+        System.out.println("----------------------------------");
+        System.out.println("init");
+        System.out.println("----------------------------------");
     }
 
     private void plotClusters() {
@@ -89,8 +104,12 @@ public class Kmean {
 
             if (distance == 4) {
                 finish = true;
+                // creating table centroid
+                CollectionCentroid db = new CollectionCentroid();
+                db.insertCentroid(clusters);
             }
         }
+
         plotClusters();
     }
 
@@ -130,21 +149,22 @@ public class Kmean {
                 if (distance >= max) {
                     max = distance;
                     cluster = i;
+
                     System.out.println("max:" + max + "\n");
                 }
 
             }
 
             point.setCluster(cluster);
-
             clusters.get(cluster).addPoint(point);
 
         }
+        plotClusters();
 
     }
-    
+
     private void calculateCentroids() {
-        Similarity sml = new Similarity();
+        Comparation sml = new Comparation();
         List emp = new ArrayList();
         for (Cluster cluster : clusters) {
             List<Point> list = cluster.getPoints();
@@ -162,15 +182,15 @@ public class Kmean {
     }
 
     public static void main(String[] args) {
-        LoadModel vector = new LoadModel();
+        Vector vector = new Vector();
+        vector.createCollectionVector();
 
-        Cursor cursor = vector.loadModel();
-
+        Cursor cursor = vector.loadModel(MyConstants.VECTOR_COLLECTION_NAME);
         Kmean k = new Kmean();
         k.init(cursor);
-//        k.assignCluster();
-//        k.calculateCentroids();
+
         k.calculate();
 
+       
     }
 }

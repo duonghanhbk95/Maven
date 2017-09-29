@@ -9,82 +9,84 @@ import java.net.URL;
 
 public class Api {
 
-	// http://localhost:8080/DiscoService/semantic
-	public static String getApi(String args) {
+    // http://localhost:8080/DiscoService/semantic
+    public static String getApi(String args) {
 
-	  try {
-		
-		String data = String.format("http://localhost:8080/DiscoService/semantic?%s",args);
-		URL url = new URL(data);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-		conn.setRequestProperty("Accept", "application/json");
+        try {
 
-		if (conn.getResponseCode() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-					+ conn.getResponseCode());
-		}
+            String data = String.format("http://localhost:8080/DiscoService/semantic?%s", args);
+            URL url = new URL(data);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-			(conn.getInputStream())));
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
 
-		String output;
-		
-		while ((output = br.readLine()) != null) {
-			return output;
-		}
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
 
-		conn.disconnect();
+            String output;
 
-	  } catch (MalformedURLException e) {
+            while ((output = br.readLine()) != null) {
+                return output;
+            }
 
-		e.printStackTrace();
+            conn.disconnect();
 
-	  } catch (IOException e) {
+        } catch (MalformedURLException e) {
 
-		e.printStackTrace();
+            e.printStackTrace();
 
-	  }
-	  return null;
+        } catch (IOException e) {
 
-	}
-	public static String comparationApi(String args) {
+            e.printStackTrace();
 
-		  try {
-			
-			String data = String.format("http://localhost:8080/DiscoService/comparation?%s",args);
-			URL url = new URL(data);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty("Accept", "application/json");
+        }
+        return null;
 
-			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
-						+ conn.getResponseCode());
-			}
+    }
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-				(conn.getInputStream())));
+    public static String comparationApi(String args) {
 
-			String output;
-			
-			while ((output = br.readLine()) != null) {
-				return output;
-			}
+        try {
 
-			conn.disconnect();
+            String data = String.format("http://localhost:8080/DiscoService/comparation?%s", args);
+            URL url = new URL(data);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
 
-		  } catch (MalformedURLException e) {
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
 
-			e.printStackTrace();
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
 
-		  } catch (IOException e) {
+            String output;
 
-			e.printStackTrace();
+            while ((output = br.readLine()) != null) {
 
-		  }
-		  return null;
+                return output;
+            }
 
-		}
+            conn.disconnect();
+
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+        return null;
+
+    }
 
 }

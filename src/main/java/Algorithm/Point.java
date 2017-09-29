@@ -5,6 +5,7 @@
  */
 package Algorithm;
 
+import QueryDB.getData.Comparation;
 import com.mongodb.Cursor;
 import com.mongodb.DBObject;
 import java.util.ArrayList;
@@ -70,13 +71,13 @@ public class Point {
     }
 
     //Calculates the distance between two points.
-    static Similarity sml = new Similarity();
+    static Comparation sml = new Comparation();
 
     protected static Float distance(Point p, Point centroid) {
         
         float distance = 0;
-        distance = sml.similizeString(p.goal, centroid.goal) + sml.similizeString(p.task, centroid.task) + sml.similizeString(p.quality, centroid.quality)
-                + sml.similizeString(p.resource, centroid.resource);
+        distance = sml.compare(p.goal, centroid.goal) + sml.compare(p.task, centroid.task) + sml.compare(p.quality, centroid.quality)
+                + sml.compare(p.resource, centroid.resource);
         
         return distance;
     }
@@ -84,13 +85,14 @@ public class Point {
     protected static Point createPoint(DBObject dbObject) {
 
         DBObject db1 = (DBObject) dbObject.get("vector");
-
+        
+        
         String str1 = db1.get("goal").toString();
         String str2 = db1.get("task").toString();
         String str3 = db1.get("quality").toString();
         String str4 = db1.get("resource").toString();
 
-        return new Point(str1, str2, str3, str3);
+        return new Point(str1, str2, str3, str4);
     }
 
     protected static List getPoints(Cursor cursor) {

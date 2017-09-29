@@ -53,7 +53,7 @@ public class Grouping {
         }
 
         DB db = mongoClient.getDB(MyConstants.DB_NAME);
-        DBCollection dept = db.getCollection(MyConstants.COL_NAME);
+        DBCollection dept = db.getCollection(MyConstants.VECTOR_COLLECTION_NAME);
 
         DBCursor cursor = dept.find();
         

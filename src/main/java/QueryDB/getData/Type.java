@@ -6,7 +6,6 @@
 package QueryDB.getData;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import java.util.ArrayList;
 import java.util.Iterator;

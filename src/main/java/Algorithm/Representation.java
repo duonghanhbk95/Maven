@@ -5,6 +5,7 @@
  */
 package Algorithm;
 
+import QueryDB.getData.Comparation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class Representation {
 
-    public List represent(List<Point> points, Similarity sml) {
+    public List represent(List<Point> points, Comparation sml) {
         
         List emp = new ArrayList();
         float sumGoal = 0;
@@ -36,13 +37,14 @@ public class Representation {
             sumResource = 0;
             for (Point point2 : points) {
                 System.out.println("----------------------------------------");
-                System.out.println("point1: " + point1.getGoal());
+                System.out.println("point1: " + point1);
                 System.out.println("point2 :" + point2);
-
-                sumGoal += sml.similizeString(point1.getGoal(), point2.getGoal());
-                sumTask += sml.similizeString(point1.getTask(), point2.getTask());
-                sumQuality += sml.similizeString(point1.getQuality(), point2.getQuality());
-                sumResource += sml.similizeString(point1.getResource(), point2.getResource());
+                
+                
+                sumGoal += sml.compare(point1.getGoal(), point2.getGoal());
+                sumTask += sml.compare(point1.getTask(), point2.getTask());
+                sumQuality += sml.compare(point1.getQuality(), point2.getQuality());
+                sumResource += sml.compare(point1.getResource(), point2.getResource());
 
                 System.out.println("sumGoal :" + sumGoal);
                 System.out.println("sumTask :" + sumTask);

@@ -5,95 +5,80 @@
  */
 package QueryDB.getData;
 
+import ConnectDB.ConnectionDB;
 import ConnectDB.MongoUtils;
 import ConnectDB.MyConstants;
 import QueryDB.SimpleQuery;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.util.JSON;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.simple.JSONArray;
 
 /**
  *
  * @author Hanh Nguyen
  */
-public class LoadModel {
+public class Vector {
 
     private static List<Type> types;
     private static List<Grouping> groups;
     private static DB db;
 
-    public LoadModel() {
-        LoadModel.groups = new ArrayList();
-        LoadModel.types = new ArrayList();
+    public Vector() {
+        Vector.groups = new ArrayList();
+        Vector.types = new ArrayList();
     }
 
-    public DBCursor loadModel() {
-        MongoClient mongoClient = null;
-        try {
-            mongoClient = MongoUtils.getMongoClient();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(SimpleQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public DBCursor loadModel(String Collection_name) {
+        ConnectionDB connect = new ConnectionDB();
+        DBCollection model = connect.connect(Collection_name);
 
-        db = mongoClient.getDB(MyConstants.DB_NAME);
-        DBCollection dept = db.getCollection(MyConstants.COL_NAME);
-
-        DBCursor cursor = dept.find();
+        DBCursor cursor = model.find();
 
         return cursor;
 
     }
-
-    private void insertGroup(List group) {
-//        db.createCollection("Group");
-    }
-
-    public static void main(String[] args) {
-
-        LoadModel load = new LoadModel();
-        DBCursor iCursor = load.loadModel();
+    public void createCollectionVector() {
         
+        ConnectionDB connect = new ConnectionDB();
+        
+        DBCursor iCursor = loadModel(MyConstants.ORIGINAL_MODEL_NAME);
+
         int i = 1;
-       
+
         Grouping group = new Grouping();
-        
+
         Type type = new Type();
         while (iCursor.hasNext()) {
             List listType = new ArrayList();
-            
+
             DBObject dbObj = (DBObject) iCursor.next();
-            
-            
-            
+
             listType = group.getVector(type.getGroup(dbObj, "istar.Goal"), type.getGroup(dbObj, "istar.Task"),
                     type.getGroup(dbObj, "istar.Quality"), type.getGroup(dbObj, "istar.Resource"));
-            
+
             System.out.println("list type:" + i + listType);
-           
+
             BasicDBObject doc = new BasicDBObject();
             doc.put("id_model", i);
+            doc.put("cluster_id", "");
+//            doc.put("vector", listType.toString());
             BasicDBObject vector = new BasicDBObject();
             vector.append("goal", listType.get(0)).append("task", listType.get(1));
             vector.append("quality", listType.get(2)).append("resource", listType.get(3));
             doc.put("vector", vector);
-            DBCollection insert = db.getCollection("vector2");
+            DBCollection insert = connect.connect(MyConstants.VECTOR_COLLECTION_NAME);
             insert.insert(doc);
 
             i++;
         }
 
     }
-
 }

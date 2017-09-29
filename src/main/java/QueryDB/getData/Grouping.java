@@ -5,11 +5,7 @@
  */
 package QueryDB.getData;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -19,7 +15,7 @@ import java.util.List;
 public class Grouping {
 
     public List getVector(List goal, List task, List quality, List resource) {
-
+        System.out.println("list task " + task);
         List emp = new ArrayList();
         Api api = new Api();
 
@@ -34,7 +30,7 @@ public class Grouping {
             emp.add(goal.get(0));
         } else {
             for (int i = 0; i < goal.size(); i++) {
-                String element = String.format("goal=%s", ((String) goal.get(i)).replace(" ", "_"));
+                String element = String.format("goal=%s", ((String) goal.get(i)).replace(" ", "_").toLowerCase());
                 //System.out.println(element);
                 String temp = new StringBuffer(data_goal).append(element).append("&").toString();
                 data_goal = temp;
@@ -48,7 +44,7 @@ public class Grouping {
             emp.add(task.get(0));
         } else {
             for (int i = 0; i < task.size(); i++) {
-                String element = String.format("goal=%s", ((String) task.get(i)).replace(" ", "_"));
+                String element = String.format("goal=%s", ((String) task.get(i)).replace(" ", "_").toLowerCase());
                 String temp = new StringBuffer(data_task).append(element).append("&").toString();
                 data_task = temp;
             }
@@ -61,7 +57,7 @@ public class Grouping {
             emp.add(quality.get(0));
         } else {
             for (int i = 0; i < quality.size(); i++) {
-                String element = String.format("goal=%s", ((String) quality.get(i)).replace(" ", "_"));
+                String element = String.format("goal=%s", ((String) quality.get(i)).replace(" ", "_").toLowerCase());
                 String temp = new StringBuffer(data_quality).append(element).append("&").toString();
                 data_quality = temp;
             }
@@ -73,7 +69,7 @@ public class Grouping {
             emp.add(resource.get(0));
         } else {
             for (int i = 0; i < resource.size(); i++) {
-                String element = String.format("goal=%s", ((String) resource.get(i)).replace(" ", "_"));
+                String element = String.format("goal=%s", ((String) resource.get(i)).replace(" ", "_").toLowerCase());
                 String temp = new StringBuffer(data_resource).append(element).append("&").toString();
                 data_resource = temp;
             }

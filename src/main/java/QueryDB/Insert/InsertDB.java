@@ -25,11 +25,11 @@ public class InsertDB {
     public void insert() throws UnknownHostException {
         MongoClient mongoClient = MongoUtils.getMongoClient();
         DB db = mongoClient.getDB(MyConstants.DB_NAME);
-        DBCollection dept = db.getCollection(MyConstants.COL_NAME);
+        DBCollection dept = db.getCollection(MyConstants.ORIGINAL_MODEL_NAME);
 
         // Insert Document 1
         ReadJSON js = new ReadJSON();
-        JSONArray array = js.readFolder("C:\\Users\\DUONG\\Desktop\\i");
+        JSONArray array = js.readFolder("E:\\Study\\TTTN\\piStar\\iStar2008_done");
         
         int i = 1;
         for (Object obj : array) {

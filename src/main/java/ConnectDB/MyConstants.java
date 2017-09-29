@@ -11,5 +11,8 @@ package ConnectDB;
  */
 public class MyConstants {
     public static final String DB_NAME ="MyStudyDB";
-    public static final String COL_NAME = "vector";
+    public static final String ORIGINAL_MODEL_NAME = "OriginalModel";
+    public static final String VECTOR_COLLECTION_NAME = "Vector";
+    public static final String CENTROID_COLLECTION_NAME = "Centroid";
+    public static final String CLUSTER_COLLECTION_NAME = "Cluster";
 }
