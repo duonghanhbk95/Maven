@@ -21,6 +21,8 @@ public class Point {
     private String task;
     private String quality;
     private String resource;
+    private static final String MEANING_VECTOR = "meaning_vector";
+    private static final String FREQUENCY_VECTOR = "frequency_vector";
     private int cluster_number = 0;
 
     public Point(String goal, String task, String quality, String resource) {
@@ -82,9 +84,9 @@ public class Point {
         return distance;
     }
 
-    protected static Point createPoint(DBObject dbObject) {
+    protected static Point createPoint(DBObject dbObject, String vector) {
 
-        DBObject db1 = (DBObject) dbObject.get("vector");
+        DBObject db1 = (DBObject) dbObject.get(vector);
         
         
         String str1 = db1.get("goal").toString();
@@ -99,9 +101,11 @@ public class Point {
         List points = new ArrayList();
 
         while (cursor.hasNext()) {
+            
+            
             DBObject dbObject = cursor.next();
 
-            points.add(createPoint(dbObject));
+            points.add(createPoint(dbObject, MEANING_VECTOR));
         }
 
         return points;

@@ -60,22 +60,33 @@ public class Vector {
             List listType = new ArrayList();
 
             DBObject dbObj = (DBObject) iCursor.next();
-
+            
+//            System.out.println("sizeGoal " + type.getGroup(dbObj, "istar.Goal").size());
             listType = group.getVector(type.getGroup(dbObj, "istar.Goal"), type.getGroup(dbObj, "istar.Task"),
                     type.getGroup(dbObj, "istar.Quality"), type.getGroup(dbObj, "istar.Resource"));
 
-            System.out.println("list type:" + i + listType);
 
-            BasicDBObject doc = new BasicDBObject();
-            doc.put("id_model", i);
-            doc.put("cluster_id", "");
-//            doc.put("vector", listType.toString());
             BasicDBObject vector = new BasicDBObject();
-            vector.append("goal", listType.get(0)).append("task", listType.get(1));
-            vector.append("quality", listType.get(2)).append("resource", listType.get(3));
-            doc.put("vector", vector);
+            vector.put("id_model", i);
+            
+            // creating field meaning_vector
+            BasicDBObject meaning_vector = new BasicDBObject();
+            meaning_vector.append("goal", listType.get(0)).append("task", listType.get(1));
+            meaning_vector.append("quality", listType.get(2)).append("resource", listType.get(3));
+            vector.put("meaning_vector", meaning_vector);
+            
+            // creating field frequency_vector
+            BasicDBObject frequency_vector = new BasicDBObject();
+            frequency_vector.append("numberGoal", type.getGroup(dbObj, "istar.Goal").size());
+            frequency_vector.append("numberTask", type.getGroup(dbObj, "istar.Task").size());
+            frequency_vector.append("numberQuality", type.getGroup(dbObj, "istar.Quality").size());
+            frequency_vector.append("numberResource", type.getGroup(dbObj, "istar.Resource").size());
+            
+            vector.put("frequency_vector", frequency_vector);
+            
+            //insert values into collection vector
             DBCollection insert = connect.connect(MyConstants.VECTOR_COLLECTION_NAME);
-            insert.insert(doc);
+            insert.insert(vector);
 
             i++;
         }

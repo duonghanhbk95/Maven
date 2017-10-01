@@ -6,24 +6,17 @@
 package Algorithm;
 
 import ConnectDB.ConnectionDB;
-import ConnectDB.MongoUtils;
 import ConnectDB.MyConstants;
-import QueryDB.SimpleQuery;
 import QueryDB.getData.Comparation;
 import QueryDB.getData.Vector;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.Cursor;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -32,7 +25,7 @@ import java.util.logging.Logger;
 public class Kmean {
 //Number of Clusters. This metric should be related to the number of points
 
-    private final int NUM_CLUSTERS = 3;
+    private final int NUM_CLUSTERS = 4;
     private List<Point> points;
     private final List<Cluster> clusters;
 
@@ -85,6 +78,7 @@ public class Kmean {
             //Calculate new centroids.
             calculateCentroids();
 
+            plotClusters();
             iteration++;
 
             List<Point> currentCentroids = getCentroids();
@@ -92,7 +86,7 @@ public class Kmean {
             //Calculates total distance between new and old Centroids
             float distance = 0;
             for (int i = 0; i < lastCentroids.size(); i++) {
-                distance = Point.distance(lastCentroids.get(i), currentCentroids.get(i));
+                distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i));
 
                 System.out.println("distance" + distance);
             }
@@ -100,9 +94,7 @@ public class Kmean {
             System.out.println("Iteration: " + iteration);
             System.out.println("Centroid distances: " + distance);
 
-            plotClusters();
-
-            if (distance == 4) {
+            if (distance == lastCentroids.size() * 4) {
                 finish = true;
                 // creating table centroid
                 CollectionCentroid db = new CollectionCentroid();
@@ -134,10 +126,10 @@ public class Kmean {
 
         int cluster = 0;
         float distance = 0;
-
+        int count = 0;
         for (Point point : points) {
-            int count = 0;
-            max = -8;
+
+            max = -4;
             for (int i = 0; i < NUM_CLUSTERS; i++) {
                 Cluster c = clusters.get(i);
                 System.out.println("point" + "[" + count + "]:" + point + "\n");
@@ -154,7 +146,7 @@ public class Kmean {
                 }
 
             }
-
+            count++;
             point.setCluster(cluster);
             clusters.get(cluster).addPoint(point);
 
@@ -166,19 +158,87 @@ public class Kmean {
     private void calculateCentroids() {
         Comparation sml = new Comparation();
         List emp = new ArrayList();
+
+        int i = 0;
         for (Cluster cluster : clusters) {
             List<Point> list = cluster.getPoints();
+
+            System.out.println("listPoint-before----------- " + i + list);
             Representation r = new Representation();
             emp = r.represent(list, sml);
 
-            Point centroid = cluster.getCentroid();
+            cluster.setCentroid(new Point(emp.get(0).toString(), emp.get(1).toString(), emp.get(2).toString(), emp.get(3).toString()));
 
-            centroid.setGoal(emp.get(0).toString());
-            centroid.setTask(emp.get(1).toString());
-            centroid.setQuality(emp.get(2).toString());
-            centroid.setResource(emp.get(3).toString());
+            System.out.println("centroi----------- " + cluster.centroid);
+            System.out.println("listPoint-mid----------- " + i + list);
+
+            System.out.println("listPoint-after----------- " + i + list);
+            i++;
         }
 
+    }
+
+   
+
+    public void insertClusterCol(List<Cluster> clusters) {
+        ConnectionDB connect = new ConnectionDB();
+        DBCollection vector = connect.connect(MyConstants.VECTOR_COLLECTION_NAME);
+        DBCollection model = connect.connect(MyConstants.ORIGINAL_MODEL_NAME);
+        DBCollection clusterCol = connect.connect(MyConstants.CLUSTER_COLLECTION_NAME);
+
+        int j = 0;
+        for (Cluster cluster : clusters) {
+            j++;
+            System.out.println("----------------------- " + j);
+
+            for (int i = 0; i < cluster.getPoints().size(); i++) {
+                BasicDBObjectBuilder whereVector = BasicDBObjectBuilder.start();
+                BasicDBObjectBuilder whereModel = BasicDBObjectBuilder.start();
+
+                whereVector.push("meaning_vector");
+                whereVector.add("goal", cluster.points.get(i).getGoal());
+                whereVector.add("task", cluster.points.get(i).getTask());
+                whereVector.add("quality", cluster.points.get(i).getQuality());
+                whereVector.add("resource", cluster.points.get(i).getResource());
+
+                DBCursor cursor1 = vector.find(whereVector.get());
+
+                whereModel.add("id_model", cursor1.next().get("id_model"));
+
+                DBCursor cursor2 = model.find(whereModel.get());
+
+                while (cursor2.hasNext()) {
+                    BasicDBObject values = (BasicDBObject) cursor2.next();
+                    values.append("cluster_id", cluster.getId() + 1);
+
+                    clusterCol.insert(values);
+                }
+
+            }
+
+        }
+
+//        while (cursorVector.hasNext()) {
+//            DBObject dbObj = cursorVector.next();
+//
+//            for (Cluster cluster : clusters) {
+//                for (int i = 0; i < cluster.getPoints().size(); i++) {
+//                    BasicDBObject point = new BasicDBObject();
+//                    point.append("goal", cluster.points.get(i).getGoal()).append("task", cluster.points.get(i).getTask())
+//                            .append("quality", cluster.points.get(i).getQuality()).append("resource", cluster.points.get(i).getResource());
+//                    if (point.equals(dbObj.get("vector"))) {
+//                        System.out.println("trued");
+//                        System.out.println("---------------------------");
+//                        System.out.println("db_id_model" + dbObj.get("id_model"));
+//                    }
+//                }
+//            }
+//
+//        }
+    }
+
+    public void execute() {
+        insertClusterCol(clusters);
     }
 
     public static void main(String[] args) {
@@ -188,9 +248,8 @@ public class Kmean {
         Cursor cursor = vector.loadModel(MyConstants.VECTOR_COLLECTION_NAME);
         Kmean k = new Kmean();
         k.init(cursor);
-
         k.calculate();
 
-       
+        k.execute();
     }
 }

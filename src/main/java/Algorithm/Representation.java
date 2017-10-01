@@ -30,6 +30,7 @@ public class Representation {
         String task = "";
         String quality = "";
         String resource = "";
+        
         for (Point point1 : points) {
             sumGoal = 0;
             sumTask = 0;

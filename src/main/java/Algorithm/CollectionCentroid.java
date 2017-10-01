@@ -31,6 +31,7 @@ public class CollectionCentroid {
             centroid.append("resource",clusters.get(i).getCentroid().getResource());
             dbObject.append("centroid", centroid);
             
+            
             cluster.insert(dbObject);
 
         }
