@@ -19,12 +19,14 @@ public class Type {
 
     private final String ACTOR = "actors";
     private final String NODE = "nodes";
+    private final String LINK = "links";
     public int group_id;
 
     public List goal;
     public List task;
     public List quality;
     public List resource;
+    public int link;
 
     public List getQuality() {
         return quality;
@@ -70,22 +72,12 @@ public class Type {
         return type1.equals(type2);
     }
 
-    private Boolean checkGoal(String type) {
-        return "istar.Goal".equals(type);
-    }
-
-    private Boolean checkTask(String type) {
-        return "istar.Task".equals(type);
-    }
-
-    private Boolean checkQuality(String type) {
-        return "istar.Quality".equals(type);
-    }
-
-    private Boolean checkResource(String type) {
-        return "istar.Resource".equals(type);
-    }
 // grouping
+    public int Link(DBObject dbObj) {
+        BasicDBList links = (BasicDBList) dbObj.get(LINK);
+        return links.size();
+
+    }
 
     public List<Type> getGroup(DBObject dbObj, String type) {
         List emp = new ArrayList();
@@ -116,6 +108,7 @@ public class Type {
             if (checkType(obj.get("type").toString(), type)) {
                 emp.add(obj.get("text"));
             }
+
         }
         return emp;
     }

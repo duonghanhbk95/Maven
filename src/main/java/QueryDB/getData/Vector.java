@@ -77,10 +77,11 @@ public class Vector {
             
             // creating field frequency_vector
             BasicDBObject frequency_vector = new BasicDBObject();
-            frequency_vector.append("numberGoal", type.getGroup(dbObj, "istar.Goal").size());
-            frequency_vector.append("numberTask", type.getGroup(dbObj, "istar.Task").size());
-            frequency_vector.append("numberQuality", type.getGroup(dbObj, "istar.Quality").size());
-            frequency_vector.append("numberResource", type.getGroup(dbObj, "istar.Resource").size());
+            frequency_vector.append("numGoal", type.getGroup(dbObj, "istar.Goal").size());
+            frequency_vector.append("numTask", type.getGroup(dbObj, "istar.Task").size());
+            frequency_vector.append("numQuality", type.getGroup(dbObj, "istar.Quality").size());
+            frequency_vector.append("numResource", type.getGroup(dbObj, "istar.Resource").size());
+            frequency_vector.append("numLink", type.Link(dbObj));
             
             vector.put("frequency_vector", frequency_vector);
             

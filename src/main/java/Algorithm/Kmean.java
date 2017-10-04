@@ -14,7 +14,6 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.Cursor;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,39 +24,42 @@ import java.util.List;
 public class Kmean {
 //Number of Clusters. This metric should be related to the number of points
 
-    private final int NUM_CLUSTERS = 4;
-    private List<Point> points;
-    private final List<Cluster> clusters;
+    private final int NUM_CLUSTERS_MEANING = 4;
+
+    private List<Point> meaning_points;
+
+    private final List<Cluster> meaning_clusters;
 
     public Kmean() {
-        this.points = new ArrayList();
-        this.clusters = new ArrayList();
+        this.meaning_points = new ArrayList();
+        this.meaning_clusters = new ArrayList();
     }
+//init meaning points
 
-    public void init(Cursor cursor) {
+    public void initMeaningPoints(Cursor cursor) {
 
-        points = Point.getPoints(cursor);
+        meaning_points = Point.getMeaningPoints(cursor);
 
         //Create Clusters
         //Set Centroids
-        for (int i = 0; i < NUM_CLUSTERS; i++) {
+        for (int i = 0; i < NUM_CLUSTERS_MEANING; i++) {
             Cluster cluster = new Cluster(i);
-            Point centroid = points.get(i);
-            cluster.setCentroid(centroid);
-            clusters.add(cluster);
+            Point centroid = meaning_points.get(i);
+            cluster.setMeaningCentroid(centroid);
+            meaning_clusters.add(cluster);
 
         }
 
-        plotClusters();
+        plotMeaningClusters();
         System.out.println("----------------------------------");
         System.out.println("init");
         System.out.println("----------------------------------");
     }
 
-    private void plotClusters() {
-        for (int i = 0; i < NUM_CLUSTERS; i++) {
-            Cluster c = clusters.get(i);
-            c.plotCluster();
+    private void plotMeaningClusters() {
+        for (int i = 0; i < NUM_CLUSTERS_MEANING; i++) {
+            Cluster c = meaning_clusters.get(i);
+            c.plotMeaningCluster();
         }
     } //ok!
 
@@ -76,9 +78,9 @@ public class Kmean {
             assignCluster();
 
             //Calculate new centroids.
-            calculateCentroids();
+            calculateMeaningCentroids();
 
-            plotClusters();
+            plotMeaningClusters();
             iteration++;
 
             List<Point> currentCentroids = getCentroids();
@@ -86,7 +88,7 @@ public class Kmean {
             //Calculates total distance between new and old Centroids
             float distance = 0;
             for (int i = 0; i < lastCentroids.size(); i++) {
-                distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i));
+                distance += Point.distanceMeaning(lastCentroids.get(i), currentCentroids.get(i));
 
                 System.out.println("distance" + distance);
             }
@@ -98,23 +100,23 @@ public class Kmean {
                 finish = true;
                 // creating table centroid
                 CollectionCentroid db = new CollectionCentroid();
-                db.insertCentroid(clusters);
+                db.insertMeaningCentroid(meaning_clusters);
             }
         }
 
-        plotClusters();
+        plotMeaningClusters();
     }
 
     private void clearClusters() {
-        clusters.forEach((cluster) -> {
-            cluster.clear();
+        meaning_clusters.forEach((cluster) -> {
+            cluster.clearMeaning();
         });
     } //ok!
 
     private List getCentroids() {
-        List centroids = new ArrayList(NUM_CLUSTERS);
-        for (Cluster cluster : clusters) {
-            Point aux = cluster.getCentroid();
+        List centroids = new ArrayList(NUM_CLUSTERS_MEANING);
+        for (Cluster cluster : meaning_clusters) {
+            Point aux = cluster.getMeaningCentroid();
             Point point = new Point(aux.getGoal(), aux.getTask(), aux.getQuality(), aux.getResource());
             centroids.add(point);
         }
@@ -127,15 +129,15 @@ public class Kmean {
         int cluster = 0;
         float distance = 0;
         int count = 0;
-        for (Point point : points) {
+        for (Point point : meaning_points) {
 
             max = -4;
-            for (int i = 0; i < NUM_CLUSTERS; i++) {
-                Cluster c = clusters.get(i);
+            for (int i = 0; i < NUM_CLUSTERS_MEANING; i++) {
+                Cluster c = meaning_clusters.get(i);
                 System.out.println("point" + "[" + count + "]:" + point + "\n");
-                System.out.println("centroid" + "[" + i + "]:" + c.getCentroid() + "\n");
+                System.out.println("centroid" + "[" + i + "]:" + c.getMeaningCentroid() + "\n");
 
-                distance = Point.distance(point, c.getCentroid());
+                distance = Point.distanceMeaning(point, c.getMeaningCentroid());
 
                 System.out.println("distance" + "[" + i + "]:" + distance);
                 if (distance >= max) {
@@ -148,28 +150,28 @@ public class Kmean {
             }
             count++;
             point.setCluster(cluster);
-            clusters.get(cluster).addPoint(point);
+            meaning_clusters.get(cluster).addMeaningPoints(point);
 
         }
-        plotClusters();
+        plotMeaningClusters();
 
     }
 
-    private void calculateCentroids() {
+    private void calculateMeaningCentroids() {
         Comparation sml = new Comparation();
         List emp = new ArrayList();
 
         int i = 0;
-        for (Cluster cluster : clusters) {
-            List<Point> list = cluster.getPoints();
+        for (Cluster cluster : meaning_clusters) {
+            List<Point> list = cluster.getMeaningPoints();
 
             System.out.println("listPoint-before----------- " + i + list);
             Representation r = new Representation();
             emp = r.represent(list, sml);
 
-            cluster.setCentroid(new Point(emp.get(0).toString(), emp.get(1).toString(), emp.get(2).toString(), emp.get(3).toString()));
+            cluster.setMeaningCentroid(new Point(emp.get(0).toString(), emp.get(1).toString(), emp.get(2).toString(), emp.get(3).toString()));
 
-            System.out.println("centroi----------- " + cluster.centroid);
+            System.out.println("centroi----------- " + cluster.meaning_centroid);
             System.out.println("listPoint-mid----------- " + i + list);
 
             System.out.println("listPoint-after----------- " + i + list);
@@ -178,78 +180,50 @@ public class Kmean {
 
     }
 
-   
-
-    public void insertClusterCol(List<Cluster> clusters) {
+    public void insertMeaning_id(List<Cluster> meaning_clusters) {
         ConnectionDB connect = new ConnectionDB();
         DBCollection vector = connect.connect(MyConstants.VECTOR_COLLECTION_NAME);
-        DBCollection model = connect.connect(MyConstants.ORIGINAL_MODEL_NAME);
-        DBCollection clusterCol = connect.connect(MyConstants.CLUSTER_COLLECTION_NAME);
 
-        int j = 0;
-        for (Cluster cluster : clusters) {
-            j++;
-            System.out.println("----------------------- " + j);
-
-            for (int i = 0; i < cluster.getPoints().size(); i++) {
+        for (Cluster cluster : meaning_clusters) {
+            for (int i = 0; i < cluster.getMeaningPoints().size(); i++) {
                 BasicDBObjectBuilder whereVector = BasicDBObjectBuilder.start();
-                BasicDBObjectBuilder whereModel = BasicDBObjectBuilder.start();
-
                 whereVector.push("meaning_vector");
-                whereVector.add("goal", cluster.points.get(i).getGoal());
-                whereVector.add("task", cluster.points.get(i).getTask());
-                whereVector.add("quality", cluster.points.get(i).getQuality());
-                whereVector.add("resource", cluster.points.get(i).getResource());
+                whereVector.add("goal", cluster.meaning_points.get(i).getGoal());
+                whereVector.add("task", cluster.meaning_points.get(i).getTask());
+                whereVector.add("quality", cluster.meaning_points.get(i).getQuality());
+                whereVector.add("resource", cluster.meaning_points.get(i).getResource());
 
-                DBCursor cursor1 = vector.find(whereVector.get());
+                //insert field meaning_id into vector collection
+                BasicDBObject obj = (BasicDBObject) vector.find(whereVector.get()).next();
 
-                whereModel.add("id_model", cursor1.next().get("id_model"));
-
-                DBCursor cursor2 = model.find(whereModel.get());
-
-                while (cursor2.hasNext()) {
-                    BasicDBObject values = (BasicDBObject) cursor2.next();
-                    values.append("cluster_id", cluster.getId() + 1);
-
-                    clusterCol.insert(values);
-                }
+                vector.update(vector.find(whereVector.get()).next(), obj.append("meaning_id", cluster.getMeaningId() + 1));
 
             }
-
         }
-
-//        while (cursorVector.hasNext()) {
-//            DBObject dbObj = cursorVector.next();
-//
-//            for (Cluster cluster : clusters) {
-//                for (int i = 0; i < cluster.getPoints().size(); i++) {
-//                    BasicDBObject point = new BasicDBObject();
-//                    point.append("goal", cluster.points.get(i).getGoal()).append("task", cluster.points.get(i).getTask())
-//                            .append("quality", cluster.points.get(i).getQuality()).append("resource", cluster.points.get(i).getResource());
-//                    if (point.equals(dbObj.get("vector"))) {
-//                        System.out.println("trued");
-//                        System.out.println("---------------------------");
-//                        System.out.println("db_id_model" + dbObj.get("id_model"));
-//                    }
-//                }
-//            }
-//
-//        }
     }
 
-    public void execute() {
-        insertClusterCol(clusters);
-    }
-
-    public static void main(String[] args) {
+    
+// clustering level 1 based on meaning
+    public void execute1() {
         Vector vector = new Vector();
         vector.createCollectionVector();
 
-        Cursor cursor = vector.loadModel(MyConstants.VECTOR_COLLECTION_NAME);
-        Kmean k = new Kmean();
-        k.init(cursor);
-        k.calculate();
+        Cursor cursorMeaning = vector.loadModel(MyConstants.VECTOR_COLLECTION_NAME);
 
-        k.execute();
+        initMeaningPoints(cursorMeaning);
+        calculate();
+
+        insertMeaning_id(meaning_clusters);
+    }
+
+    public static void main(String[] args) {
+        Kmean k = new Kmean();
+        k.execute1();
+
+        ConnectionDB connect = new ConnectionDB();
+        DBCollection vector = connect.connect(MyConstants.VECTOR_COLLECTION_NAME);
+
+        FrequencyKMean a = new FrequencyKMean();
+        a.execute2(k.meaning_clusters, vector);
     }
 }

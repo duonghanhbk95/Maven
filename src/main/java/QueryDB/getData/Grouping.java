@@ -15,7 +15,7 @@ import java.util.List;
 public class Grouping {
 
     public List getVector(List goal, List task, List quality, List resource) {
-        System.out.println("list task " + task);
+       
         List emp = new ArrayList();
         Api api = new Api();
 
@@ -36,7 +36,7 @@ public class Grouping {
                 data_goal = temp;
             }
             
-            emp.add(api.getApi(data_goal));
+            emp.add(Api.getApi(data_goal));
         }
         if (task.isEmpty()) {
             emp.add("");
@@ -48,7 +48,7 @@ public class Grouping {
                 String temp = new StringBuffer(data_task).append(element).append("&").toString();
                 data_task = temp;
             }
-            emp.add(api.getApi(data_task));
+            emp.add(Api.getApi(data_task));
         }
 
         if (quality.isEmpty()) {
@@ -61,7 +61,7 @@ public class Grouping {
                 String temp = new StringBuffer(data_quality).append(element).append("&").toString();
                 data_quality = temp;
             }
-            emp.add(api.getApi(data_quality));
+            emp.add(Api.getApi(data_quality));
         }
         if (resource.isEmpty()) {
             emp.add("");
@@ -73,7 +73,7 @@ public class Grouping {
                 String temp = new StringBuffer(data_resource).append(element).append("&").toString();
                 data_resource = temp;
             }
-            emp.add(api.getApi(data_resource));
+            emp.add(Api.getApi(data_resource));
         }
         return emp;
     }
