@@ -12,7 +12,6 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.Cursor;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
  */
 public class FrequencyKMean {
 
-    private final int NUM_CLUSTERS_FREQUENCY = 3;
+    private final int NUM_CLUSTERS_FREQUENCY = 2;
     private List<Point> frequency_points;
     public final List<Cluster> frequency_clusters;
 
@@ -30,7 +29,8 @@ public class FrequencyKMean {
         this.frequency_clusters = new ArrayList();
         this.frequency_points = new ArrayList();
     }
-
+    
+    
     // init frequency points
     private void initFrequencyPoints(Cursor cursor) {
         frequency_points = Point.getFrequencyPoints(cursor);
@@ -184,10 +184,17 @@ public class FrequencyKMean {
                 whereVector1.add("frequency_vector", whereVector2.get());
 
                
-                //insert field meaning_id into vector collection
-                BasicDBObject obj = (BasicDBObject) vector.find(whereVector1.get()).next();
+                //insert field frequency_id into vector collection
+                
+                DBCursor cursor = vector.find(whereVector1.get());
+                while(cursor.hasNext()) {
+                    BasicDBObject obj = (BasicDBObject) cursor.next();
+                    obj.append("frequency_id", cluster.getFrequencyId() + 1);
+                    vector.save(obj);
+                }
+                
 //
-                vector.update(vector.find(whereVector1.get()).next(), obj.append("frequency_id", cluster.getFrequencyId() + 1));
+//                vector.update(vector.find(whereVector1.get()).next(), obj.append("frequency_id", cluster.getFrequencyId() + 1));
 
             }
              
@@ -207,6 +214,7 @@ public class FrequencyKMean {
             BasicDBObjectBuilder whereModel = BasicDBObjectBuilder.start();
             whereModel.add("id_model", cursor.next().get("id_model"));
             DBCursor cursor2 = model.find(whereModel.get());
+           
             
             BasicDBObject values = (BasicDBObject) cursor2.next();
             values.append("meaning_id", meaning_cluster.meaning_id + 1).append("frequency_id", frequency_cluster.frequency_id+1 );
@@ -232,12 +240,13 @@ public class FrequencyKMean {
             db.insertFrequencyCentroid(cluster, frequency_clusters);
 
             BasicDBObjectBuilder whereVector2 = BasicDBObjectBuilder.start();
-            whereVector2.add("meaning_id", cluster.meaning_id+1);
+            whereVector2.add("meaning_id", cluster.meaning_id + 1);
             for(int i = 0; i < frequency_clusters.size(); i++) {
                 
                 whereVector2.add("frequency_id", frequency_clusters.get(i).frequency_id+1);
                 
                 DBCursor cursorVector = vector.find(whereVector2.get());
+                
                 insertClusterCol(cluster, frequency_clusters.get(i), cursorVector);
                
             }

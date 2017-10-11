@@ -29,7 +29,8 @@ public class InsertDB {
 
         // Insert Document 1
         ReadJSON js = new ReadJSON();
-        JSONArray array = js.readFolder("E:\\Study\\TTTN\\piStar\\iStar2008_done");
+        JSONArray array = js.readFolder("E:\\Study\\TTTN\\piStar\\DataSet_2");
+//        JSONArray array = js.readFolder("E:\\Study\\TTTN\\piStar\\iStar2010_done\\System");
         
         int i = 1;
         for (Object obj : array) {

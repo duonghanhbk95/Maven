@@ -26,12 +26,13 @@ public class Point {
     private double numTask;
     private double numQuality;
     private double numResource;
-    private double numlink;
+    private double numLink;
 
     private static final String MEANING_VECTOR = "meaning_vector";
     private static final String FREQUENCY_VECTOR = "frequency_vector";
     private int cluster_number = 0;
 
+  
     public Point(String goal, String task, String quality, String resource) {
         this.goal = goal;
         this.task = task;
@@ -44,7 +45,7 @@ public class Point {
         this.numTask = numTask;
         this.numQuality = numQuality;
         this.numResource = numResource;
-        this.numlink = numlink;
+        this.numLink = numlink;
     }
 
     public String getGoal() {
@@ -112,11 +113,11 @@ public class Point {
     }
 
     public double getNumLink() {
-        return numlink;
+        return numLink;
     }
 
     public void setNumLink(double numlink) {
-        this.numlink = numlink;
+        this.numLink = numlink;
     }
 
     public void setCluster(int n) {
@@ -142,16 +143,12 @@ public class Point {
     protected static Point createMeaningPoint(DBObject dbObject, String vector) {
 
         DBObject db1 = (DBObject) dbObject.get(vector);
-        
-       
 
         String str1 = db1.get("goal").toString();
         String str2 = db1.get("task").toString();
         String str3 = db1.get("quality").toString();
         String str4 = db1.get("resource").toString();
-        
-        
-
+     
         return new Point(str1, str2, str3, str4);
     }
 
@@ -167,56 +164,50 @@ public class Point {
 
         return points;
     }
-    
-    //calculates the distance between two points belong to frequency
 
+    //calculates the distance between two points belong to frequency
     /**
      *
      * @param p
      * @param centroid
      * @return
      */
-    
     protected static double distanceFrequency(Point p, Point centroid) {
         double distance = Math.sqrt(Math.pow((centroid.getNumGoal() - p.getNumGoal()), 2) + Math.pow((centroid.getNumTask() - p.getNumTask()), 2)
-                          + Math.pow((centroid.getNumQuality() - p.getNumQuality()), 2) + Math.pow((centroid.getNumResource() - p.getNumResource()), 2)
-                          + Math.pow((centroid.getNumLink() - p.getNumLink()), 2));
-  
+                + Math.pow((centroid.getNumQuality() - p.getNumQuality()), 2) + Math.pow((centroid.getNumResource() - p.getNumResource()), 2)
+                + Math.pow((centroid.getNumLink() - p.getNumLink()), 2));
+
         return distance;
     }
-    
+
     protected static Point createFrequencyPoint(DBObject dbObject, String vector) {
         DBObject db1 = (DBObject) dbObject.get(vector);
-        
-        
+
         int numGoal = Integer.parseInt(db1.get("numGoal").toString());
         int numTask = Integer.parseInt(db1.get("numTask").toString());
         int numQuality = Integer.parseInt(db1.get("numQuality").toString());
         int numResource = Integer.parseInt(db1.get("numResource").toString());
         int numlink = Integer.parseInt(db1.get("numLink").toString());
-        
-        
-       
-        
+
         return new Point(numGoal, numTask, numQuality, numResource, numlink);
     }
-    
+
     protected static List getFrequencyPoints(Cursor cursor) {
         List points = new ArrayList();
-        while(cursor.hasNext()) {
+        while (cursor.hasNext()) {
             DBObject dbObj = cursor.next();
-            
+
             points.add(createFrequencyPoint(dbObj, FREQUENCY_VECTOR));
         }
-        
+
         return points;
     }
-    @Override
-    public String toString() {
-        return "(" + numGoal + "," + numTask + "," + numQuality + "," + numResource + "," + numlink + ")";
-    }
-    
+//    @Override
 //    public String toString() {
-//        return "(" + goal + "," + task + "," + quality + "," + resource + ")";
+//        return "(" + numGoal + "," + numTask + "," + numQuality + "," + numResource + "," + numlink + ")";
 //    }
+
+    public String toString() {
+        return "(" + goal + "," + task + "," + quality + "," + resource + ")";
+    }
 }
