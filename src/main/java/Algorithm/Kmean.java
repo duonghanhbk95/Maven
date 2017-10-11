@@ -45,7 +45,7 @@ public class Kmean {
             return centroid;
 
         }
-int j = 1;
+        int j = 1;
         for (Point point : points) {
             int i = 1;
             System.out.println("point " + j + ":" + j);
@@ -53,16 +53,16 @@ int j = 1;
             for (Cluster cluster : clusters) {
                 sum += sml.compare(cluster.getMeaningCentroid().getGoal(), point.getGoal()) + sml.compare(cluster.getMeaningCentroid().getQuality(), point.getQuality())
                         + sml.compare(cluster.getMeaningCentroid().getResource(), point.getResource()) + sml.compare(cluster.getMeaningCentroid().getTask(), point.getTask());
-                System.out.println("sum " + i + ": "+ sum);
+                System.out.println("sum " + i + ": " + sum);
                 i++;
-                
+
             }
             if (sum < min) {
-                    min = sum;
-                    
-                    System.out.println("min " + min);
-                    centroid = point;
-                }
+                min = sum;
+
+                System.out.println("min " + min);
+                centroid = point;
+            }
             j++;
         }
 
@@ -121,8 +121,21 @@ int j = 1;
             List<Point> currentCentroids = getCentroids();
 
             //Calculates total distance between new and old Centroids
+            float element = lastCentroids.size() * 4;
             float distance = 0;
             for (int i = 0; i < lastCentroids.size(); i++) {
+                if ("".equals(lastCentroids.get(i).getGoal())) {
+                    element--;
+                }
+                if ("".equals(lastCentroids.get(i).getTask())) {
+                    element--;
+                }
+                if ("".equals(lastCentroids.get(i).getQuality())) {
+                    element--;
+                }
+                if ("".equals(lastCentroids.get(i).getResource())) {
+                    element--;
+                }
                 distance += Point.distanceMeaning(lastCentroids.get(i), currentCentroids.get(i));
 
                 System.out.println("distance" + distance);
@@ -131,7 +144,7 @@ int j = 1;
             System.out.println("Iteration: " + iteration);
             System.out.println("Centroid distances: " + distance);
 
-            if (distance == lastCentroids.size() * 4) {
+            if (distance == element) {
                 finish = true;
                 // creating table centroid
                 CollectionCentroid db = new CollectionCentroid();
